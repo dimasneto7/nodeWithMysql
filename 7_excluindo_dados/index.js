@@ -68,12 +68,12 @@ app.get('/books/:id', (req, res) => {
   })
 })
 
-app.get('/books/edit/:id', function (req, res) {
+app.get('/books/edit/:id', (req, res) => {
   const id = req.params.id
 
-  const query = `SELECT * FROM books WHERE id = ${id}`
+  const sql = `SELECT * FROM books WHERE id = ${id}`
 
-  conn.query(query, function (err, data) {
+  conn.query(sql, function (err, data) {
     if (err) {
       console.log(err)
     }
@@ -86,11 +86,43 @@ app.get('/books/edit/:id', function (req, res) {
   })
 })
 
+app.post('/books/updatebook', (req, res) => {
+  const id = req.body.id
+  const title = req.body.title
+  const pageqty = req.body.pageqty
+
+  const sql = `UPDATE books SET title = '${title}', pageqty = '${pageqty}' WHERE id = ${id}`
+
+  conn.query(sql, function (err) {
+    if (err) {
+      console.log(err)
+      return
+    }
+  })
+
+  res.redirect('/books')
+})
+
 const conn = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'nodemysql',
+})
+
+app.post('/books/remove/:id', (req, res) => {
+  const id = req.params.id
+
+  const sql = `DELETE FROM books WHERE id = ${id}`
+
+  conn.query(sql, function (err) {
+    if (err) {
+      console.log(err)
+      return
+    }
+
+    res.redirect('/books')
+  })
 })
 
 conn.connect(function (err) {
